@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int shortestPath(int V, int src, int dest, vector<vector<int>>& edges) {
+
+        vector<pair<int,int>> adj[V];
+
+        for (auto &e : edges) {
+            int u = e[0];
+            int v = e[1];
+            int w = e[2];
+
+            adj[u].push_back({v, w});
+            adj[v].push_back({u, w});
+        }
+
+        vector<int> dist(V, INT_MAX);
+
+        priority_queue<pair<int,int>,
+                       vector<pair<int,int>>,
+                       greater<pair<int,int>>> pq;
+
+        dist[src] = 0;
+        pq.push({0, src});
+
+        while (!pq.empty()) {
+            auto cur = pq.top();
+            pq.pop();
+
+            int d = cur.first;
+            int u = cur.second;
+
+            if (d > dist[u]) continue;
+
+            for (auto &it : adj[u]) {
+                int v = it.first;
+                int w = it.second;
+
+                if (dist[v] > d + w) {
+                    dist[v] = d + w;
+                    pq.push({dist[v], v});
+                }
+            }
+        }
+
+        return dist[dest] == INT_MAX ? -1 : dist[dest];
+    }
+};
